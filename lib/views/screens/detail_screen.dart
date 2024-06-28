@@ -23,6 +23,53 @@ class _DetailsScreenState extends State<DetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButton: IconButton(
+        onPressed: () {},
+        icon: Icon(
+          CupertinoIcons.heart_circle_fill,
+          size: 50,
+          color: Colors.lightGreen.withOpacity(0.4),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(
+          left: 18,
+          right: 18,
+          bottom: 18,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {},
+                child: Ink(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.lightGreen,
+                  ),
+                  child: const Center(
+                    child: Text("Add To Cart"),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 15),
+            IconButton.filled(
+              style: IconButton.styleFrom(
+                fixedSize: const Size(50, 50),
+                backgroundColor: Colors.lightGreen,
+              ),
+              onPressed: () {},
+              icon: const Icon(
+                Icons.shopping_bag,
+              ),
+            )
+          ],
+        ),
+      ),
       appBar: AppBar(
         actions: [
           IconButton(
@@ -35,6 +82,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +205,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 )
               ],
             ),
-            const Text("About Products"),
+            const Text(
+              "About Products",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                height: 3,
+              ),
+            ),
             Text(widget.product.description),
           ],
         ),
