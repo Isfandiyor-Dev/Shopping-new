@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_new/controllers/products_controller.dart';
 import 'package:shopping_new/views/screens/category_screen.dart';
+import 'package:shopping_new/views/widgets/cart_bottom_sheet.dart';
 import 'package:shopping_new/views/widgets/product_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,6 +20,22 @@ class _HomePageState extends State<HomePage> {
     var controller = Provider.of<ProductsController>(context);
     return Scaffold(
       drawer: const Drawer(),
+      floatingActionButton: IconButton.filled(
+        style: IconButton.styleFrom(
+          fixedSize: const Size(50, 50),
+          backgroundColor: Colors.lightGreen,
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) => CartBottomSheet(),
+          );
+        },
+        icon: const Icon(
+          Icons.shopping_bag,
+        ),
+      ),
       appBar: AppBar(
         toolbarHeight: 90,
         leading: Builder(

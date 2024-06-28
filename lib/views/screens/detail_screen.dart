@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_new/controllers/cart_controller.dart';
 import 'package:shopping_new/models/product.dart';
+import 'package:shopping_new/views/widgets/cart_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class DetailsScreen extends StatefulWidget {
@@ -22,6 +25,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var cartController = Provider.of<CartController>(context);
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: IconButton(
@@ -43,15 +47,44 @@ class _DetailsScreenState extends State<DetailsScreen> {
             Expanded(
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
-                onTap: () {},
+                onTap: () {
+                  cartController.addToCart(widget.product);
+                },
                 child: Ink(
                   height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.lightGreen,
                   ),
-                  child: const Center(
-                    child: Text("Add To Cart"),
+                  child: Center(
+                    child: cartController.isInCart(widget.product.id)
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  cartController
+                                      .removeFromCart(widget.product.id);
+                                },
+                                icon: const Icon(
+                                  Icons.remove,
+                                  size: 20,
+                                ),
+                              ),
+                              Text(
+                                  "${cartController.getProductAmount(widget.product.id)}"),
+                              IconButton(
+                                onPressed: () {
+                                  cartController.addToCart(widget.product);
+                                },
+                                icon: const Icon(
+                                  Icons.add,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text("Add To Cart"),
                   ),
                 ),
               ),
@@ -62,7 +95,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 fixedSize: const Size(50, 50),
                 backgroundColor: Colors.lightGreen,
               ),
-              onPressed: () {},
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) => CartBottomSheet(
+                    product: widget.product,
+                  ),
+                );
+              },
               icon: const Icon(
                 Icons.shopping_bag,
               ),
@@ -97,13 +138,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text("Lamp"),
-                    const SizedBox(
+                    Text(widget.product.name),
+                    SizedBox(
                       width: 160,
                       child: Text(
-                        "Table Desk Lamp Light",
+                        widget.product.title,
                         textAlign: TextAlign.end,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),
@@ -111,9 +152,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                     const SizedBox(height: 30),
                     const Text("Price"),
-                    const Text(
-                      "\$140.00",
-                      style: TextStyle(
+                    Text(
+                      "\$${widget.product.price}",
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: Colors.lightGreen,
