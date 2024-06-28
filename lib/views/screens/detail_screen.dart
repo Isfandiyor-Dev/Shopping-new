@@ -156,7 +156,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   ),
                 )
               ],
-            )
+            ),
+            const Text("About Products"),
+            Text(widget.product.description),
           ],
         ),
       ),

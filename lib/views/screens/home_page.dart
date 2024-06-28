@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_new/controllers/products_controller.dart';
@@ -7,7 +5,7 @@ import 'package:shopping_new/views/screens/category_screen.dart';
 import 'package:shopping_new/views/widgets/product_item.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
