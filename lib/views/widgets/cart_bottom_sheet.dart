@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_new/controllers/cart_controller.dart';
 import 'package:shopping_new/models/product.dart';
-import 'package:shopping_new/views/widgets/product_item.dart';
 
+// ignore: must_be_immutable
 class CartBottomSheet extends StatelessWidget {
   Product? product;
   CartBottomSheet({super.key, this.product});
 
   @override
   Widget build(BuildContext context) {
-    print(product);
     var cartController = Provider.of<CartController>(context);
     return Padding(
       padding: const EdgeInsets.all(20.0),
@@ -47,7 +46,7 @@ class CartBottomSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 child: Text(
                   "Items ${cartController.getAllProdcutsAmount()}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
@@ -131,13 +130,13 @@ class CartBottomSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   "Total:  \$ ${cartController.cart.totalPrice}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.lightGreen,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,

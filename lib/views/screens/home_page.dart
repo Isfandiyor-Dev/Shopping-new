@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_new/controllers/products_controller.dart';
+import 'package:shopping_new/models/product.dart';
 import 'package:shopping_new/views/screens/category_screen.dart';
 import 'package:shopping_new/views/widgets/cart_bottom_sheet.dart';
+import 'package:shopping_new/views/widgets/my_drawer.dart';
 import 'package:shopping_new/views/widgets/product_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,11 +17,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int navigatorIndex = 0;
 
+  List discovery = [
+    "Popular",
+    "New",
+    "Best Selling",
+    "Trending",
+    "Recommended",
+    "Editors' Picks",
+    "On Sale",
+    "Top Rated",
+    "Seasonal Favorites",
+    "Customer Favorites",
+  ];
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<ProductsController>(context);
     return Scaffold(
-      drawer: const Drawer(),
+      drawer: const MyDrawer(),
       floatingActionButton: IconButton.filled(
         style: IconButton.styleFrom(
           fixedSize: const Size(50, 50),
@@ -128,11 +142,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(
-            height: 90,
+            height: 100,
             child: ListView.builder(
               padding: const EdgeInsets.all(20),
               scrollDirection: Axis.horizontal,
-              itemCount: 4,
+              itemCount: discovery.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(right: 12),
@@ -145,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(10),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 400),
-                      width: 130,
+                      width: 140,
                       decoration: BoxDecoration(
                         color: navigatorIndex == index
                             ? Colors.lightGreen.shade400
@@ -154,7 +168,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Center(
                         child: Text(
-                          "Popular",
+                          discovery[index],
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: navigatorIndex == index
                                 ? Colors.white
@@ -199,19 +214,29 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
-                mainAxisSpacing: 90,
-                crossAxisSpacing: 20,
-              ),
-              itemCount: controller.products.length,
-              itemBuilder: (context, index) {
-                return ProductItem(product: controller.products[index]);
-              },
-            ),
+            child: StreamBuilder(
+                stream: controller.list,
+                builder: (context, snapshot) {
+                  var products = snapshot.data!.docs;
+                  return GridView.builder(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 50),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1,
+                      mainAxisSpacing: 90,
+                      crossAxisSpacing: 20,
+                    ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      Product product = Product.fromJson(products[index]);
+                      return ProductItem(
+                        product: product,
+                      );
+                    },
+                  );
+                }),
           )
         ],
       ),

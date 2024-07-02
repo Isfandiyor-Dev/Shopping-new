@@ -1,14 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
-  final String id;
-  final String name;
-  final String title;
-  final String description;
-  final double rating;
-  final double price;
-  final String firstColorImage;
-  final String secondColorImage;
-  final String thirdColorImage;
-  final String categoryId; 
+  String id;
+  String name;
+  String title;
+  String description;
+  num rating;
+  num price;
+  String? imageUrl;
+  String categoryId;
 
   Product({
     required this.id,
@@ -17,11 +17,33 @@ class Product {
     required this.description,
     required this.rating,
     required this.price,
-    required this.firstColorImage,
-    required this.secondColorImage,
-    required this.thirdColorImage,
+    required this.imageUrl,
     required this.categoryId,
   });
+
+  factory Product.fromJson(QueryDocumentSnapshot query) {
+    return Product(
+      id: query.id,
+      name: query['name'] as String,
+      title: query['title'] as String,
+      description: query['description'] as String,
+      rating: query['rating'] as num, // Directly casting to num
+      price: query['price'] as num, // Directly casting to num
+      imageUrl: query['imageUrl'] as String?,
+      categoryId: query['categoryId'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'title': title,
+      'description': description,
+      'rating': rating,
+      'price': price,
+      'imageUrl': imageUrl,
+      'categoryId': categoryId,
+    };
+  }
 }
-
-

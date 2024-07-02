@@ -1,63 +1,26 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_new/models/product.dart';
 import 'package:shopping_new/models/products_category.dart';
+import 'package:shopping_new/services/products_firebase_services.dart';
 
-class ProductsController extends ChangeNotifier {
-  final List<Product> _products = [
-    Product(
-      id: '1',
-      name: 'Modern Sofa',
-      title: 'Elegant Modern Sofa',
-      description:
-          'A comfortable and stylish modern sofa that fits perfectly in any living room.',
-      rating: 4.5,
-      price: 299.99,
-      firstColorImage: 'assets/images/sofa_red.png',
-      secondColorImage: 'assets/images/sofa_blue.png',
-      thirdColorImage: 'assets/images/sofa_gray.png',
-      categoryId: '1',
-    ),
-    Product(
-      id: '2',
-      name: 'Coffee Table',
-      title: 'Wooden Coffee Table',
-      description: 'A classic wooden coffee table with a modern twist.',
-      rating: 4.0,
-      price: 149.99,
-      firstColorImage: 'assets/images/coffee_table_oak.png',
-      secondColorImage: 'assets/images/coffee_table_walnut.png',
-      thirdColorImage: 'assets/images/coffee_table_maple.png',
-      categoryId: '1',
-    ),
-    Product(
-      id: '3',
-      name: 'King Size Bed',
-      title: 'Luxury King Size Bed',
-      description:
-          'A luxurious and comfortable king size bed for a good night\'s sleep.',
-      rating: 4.8,
-      price: 499.99,
-      firstColorImage: 'assets/images/bed_white.png',
-      secondColorImage: 'assets/images/bed_black.png',
-      thirdColorImage: 'assets/images/bed_gray.png',
-      categoryId: '2',
-    ),
-    Product(
-      id: '4',
-      name: 'Nightstand',
-      title: 'Modern Nightstand',
-      description: 'A sleek and modern nightstand with ample storage.',
-      rating: 4.3,
-      price: 79.99,
-      firstColorImage: 'assets/images/nightstand_white.png',
-      secondColorImage: 'assets/images/nightstand_black.png',
-      thirdColorImage: 'assets/images/nightstand_brown.png',
-      categoryId: '2',
-    ),
-  ];
+class ProductsController with ChangeNotifier {
+  final _carsFirebaseService = ProductsFirebaseServices();
+
+  final List<Product> _products = [];
 
   List<Product> get products {
     return [..._products];
+  }
+
+  Stream<QuerySnapshot> get list async* {
+    yield* _carsFirebaseService.getProducts();
+  }
+
+  Future<void> addProduct(Map<String, dynamic> productJson, File? imageFile) async {
+    await _carsFirebaseService.addProduct(productJson, imageFile);
   }
 
   final List<CategoryModel> _categories = [
@@ -82,13 +45,77 @@ class ProductsController extends ChangeNotifier {
   }
 
   void reloadCategory() {
-    for (var category in _categories) {
-      category.products.clear();
-      for (var product in _products) {
-        if (category.id == product.categoryId) {
-          category.products.add(product);
+    // Fetch products from Firestore
+    _carsFirebaseService.getProducts().listen((snapshot) {
+      _products.clear();
+      print(snapshot.docs.length);
+      for (var doc in snapshot.docs) {
+        _products.add(Product.fromJson(doc));
+      }
+      // Update categories with products
+      for (var category in _categories) {
+        category.products.clear();
+        for (var product in _products) {
+          if (category.id == product.categoryId) {
+            category.products.add(product);
+          }
         }
       }
-    }
+      notifyListeners();
+    });
   }
 }
+
+
+// class ProductController extends ChangeNotifier {
+//   final List<Product> _products = [
+//     Product(
+//       id: '1',
+//       name: 'Modern Sofa',
+//       title: 'Elegant Modern Sofa',
+//       description:
+//           'A comfortable and stylish modern sofa that fits perfectly in any living room.',
+//       rating: 4.5,
+//       price: 299.99,
+//       categoryId: '1',
+//       imageUrl: '',
+//     ),
+//     Product(
+//       id: '2',
+//       name: 'Coffee Table',
+//       title: 'Wooden Coffee Table',
+//       description: 'A classic wooden coffee table with a modern twist.',
+//       rating: 4.0,
+//       price: 149.99,
+//       categoryId: '1',
+//       imageUrl: '',
+//     ),
+//     Product(
+//       id: '3',
+//       name: 'King Size Bed',
+//       title: 'Luxury King Size Bed',
+//       description:
+//           'A luxurious and comfortable king size bed for a good night\'s sleep.',
+//       rating: 4.8,
+//       price: 499.99,
+//       categoryId: '2',
+//       imageUrl: '',
+//     ),
+//     Product(
+//       id: '4',
+//       name: 'Nightstand',
+//       title: 'Modern Nightstand',
+//       description: 'A sleek and modern nightstand with ample storage.',
+//       rating: 4.3,
+//       price: 79.99,
+//       categoryId: '2',
+//       imageUrl: '',
+//     ),
+//   ];
+
+//   List<Product> get products {
+//     return [..._products];
+//   }
+// }
+
+

@@ -84,7 +84,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               ),
                             ],
                           )
-                        : Text("Add To Cart"),
+                        : const Text("Add To Cart"),
                   ),
                 ),
               ),
