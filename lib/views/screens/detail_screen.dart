@@ -7,8 +7,9 @@ import 'package:shopping_new/views/widgets/cart_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class DetailsScreen extends StatefulWidget {
+  bool isAdmin;
   Product product;
-  DetailsScreen({super.key, required this.product});
+  DetailsScreen({super.key, this.isAdmin = false, required this.product});
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -28,89 +29,94 @@ class _DetailsScreenState extends State<DetailsScreen> {
     var cartController = Provider.of<CartController>(context);
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      floatingActionButton: IconButton(
-        onPressed: () {},
-        icon: Icon(
-          CupertinoIcons.heart_circle_fill,
-          size: 50,
-          color: Colors.lightGreen.withOpacity(0.4),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(
-          left: 18,
-          right: 18,
-          bottom: 18,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: () {
-                  cartController.addToCart(widget.product);
-                },
-                child: Ink(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.lightGreen,
-                  ),
-                  child: Center(
-                    child: cartController.isInCart(widget.product.id)
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  cartController
-                                      .removeFromCart(widget.product.id);
-                                },
-                                icon: const Icon(
-                                  Icons.remove,
-                                  size: 20,
-                                ),
-                              ),
-                              Text(
-                                  "${cartController.getProductAmount(widget.product.id)}"),
-                              IconButton(
-                                onPressed: () {
-                                  cartController.addToCart(widget.product);
-                                },
-                                icon: const Icon(
-                                  Icons.add,
-                                  size: 20,
-                                ),
-                              ),
-                            ],
-                          )
-                        : const Text("Add To Cart"),
-                  ),
-                ),
+      floatingActionButton: widget.isAdmin
+          ? null
+          : IconButton(
+              onPressed: () {},
+              icon: Icon(
+                CupertinoIcons.heart_circle_fill,
+                size: 50,
+                color: Colors.lightGreen.withOpacity(0.4),
               ),
             ),
-            const SizedBox(width: 15),
-            IconButton.filled(
-              style: IconButton.styleFrom(
-                fixedSize: const Size(50, 50),
-                backgroundColor: Colors.lightGreen,
+      bottomNavigationBar: widget.isAdmin
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(
+                left: 18,
+                right: 18,
+                bottom: 18,
               ),
-              onPressed: () {
-                showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (context) => CartBottomSheet(
-                    product: widget.product,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        cartController.addToCart(widget.product);
+                      },
+                      child: Ink(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.lightGreen,
+                        ),
+                        child: Center(
+                          child: cartController.isInCart(widget.product.id)
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        cartController
+                                            .removeFromCart(widget.product.id);
+                                      },
+                                      icon: const Icon(
+                                        Icons.remove,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    Text(
+                                        "${cartController.getProductAmount(widget.product.id)}"),
+                                    IconButton(
+                                      onPressed: () {
+                                        cartController
+                                            .addToCart(widget.product);
+                                      },
+                                      icon: const Icon(
+                                        Icons.add,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const Text("Add To Cart"),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              },
-              icon: const Icon(
-                Icons.shopping_bag,
+                  const SizedBox(width: 15),
+                  IconButton.filled(
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(50, 50),
+                      backgroundColor: Colors.lightGreen,
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) => CartBottomSheet(
+                          product: widget.product,
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.shopping_bag,
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
       appBar: AppBar(
         actions: [
           IconButton(

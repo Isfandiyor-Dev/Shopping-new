@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopping_new/controllers/products_controller.dart';
-import 'package:shopping_new/models/product.dart';
 import 'dart:io';
 
 import 'package:shopping_new/views/widgets/mu_text_field.dart';
 
 class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+  String categoryId;
+  AddProductScreen({
+    super.key,
+    required this.categoryId,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -21,7 +24,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
   File? _secondColorImage;
   File? _thirdColorImage;
 
-  final categoryIdController = TextEditingController();
   final descriptionController = TextEditingController();
   final nameController = TextEditingController();
   final priceController = TextEditingController();
@@ -49,8 +51,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   var productsController = ProductsController();
 
-  void AddProductBtn() {
+  void addProductBtn() {
     if (_formKey.currentState!.validate()) {
+      showDialog(
+        context: context,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
       productsController.addProduct({
         'id': UniqueKey().toString(),
         'name': nameController.text,
@@ -58,8 +66,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
         'description': descriptionController.text,
         'rating': ratingController.text,
         'price': priceController.text,
-        'categoryId': categoryIdController.text,
-      }, _firstColorImage);
+        'categoryId': widget.categoryId,
+      }, _firstColorImage).then((value) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -75,17 +86,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              const SizedBox(height: 20),
-              MyTextField(
-                labelText: "Category ID",
-                validation: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a category ID';
-                  }
-                  return null;
-                },
-                textEditingController: categoryIdController,
-              ),
               const SizedBox(height: 20),
               MyTextField(
                 labelText: "Description",
@@ -173,7 +173,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: AddProductBtn,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                ),
+                onPressed: addProductBtn,
                 child: const Text('Add Product'),
               ),
             ],

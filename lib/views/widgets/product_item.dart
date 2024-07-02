@@ -4,8 +4,9 @@ import 'package:shopping_new/models/product.dart';
 import 'package:shopping_new/views/screens/detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
+  bool isAdmin;
   final Product product;
-  const ProductItem({super.key, required this.product});
+  ProductItem({super.key, this.isAdmin = false, required this.product,});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class ProductItem extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (ctx) => DetailsScreen(
+              isAdmin: isAdmin,
               product: product,
             ),
           ),
@@ -105,7 +107,6 @@ class ProductItem extends StatelessWidget {
               ),
             ),
           ),
-          
         ],
       ),
     );

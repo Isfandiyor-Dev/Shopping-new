@@ -3,18 +3,38 @@ import 'package:provider/provider.dart';
 import 'package:shopping_new/controllers/products_controller.dart';
 
 import 'package:shopping_new/models/products_category.dart';
+import 'package:shopping_new/views/screens/admin/add_product.dart';
 import 'package:shopping_new/views/widgets/product_item.dart';
 
 // ignore: must_be_immutable
 class CategoryScreen extends StatelessWidget {
+  bool isAdmin;
   CategoryModel category;
-  CategoryScreen({super.key, required this.category});
+  CategoryScreen({
+    super.key,
+    required this.category,
+    this.isAdmin = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     var controller = Provider.of<ProductsController>(context);
     controller.reloadCategory();
     return Scaffold(
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        AddProductScreen(categoryId: category.id),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: Column(
         children: [
           Container(
@@ -96,7 +116,8 @@ class CategoryScreen extends StatelessWidget {
               ),
               itemCount: category.products.length,
               itemBuilder: (context, index) {
-                return ProductItem(product: category.products[index]);
+                return ProductItem(
+                    isAdmin: isAdmin, product: category.products[index]);
               },
             ),
           )
